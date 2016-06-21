@@ -6,11 +6,8 @@ MAX = 65535
 def listtocolor(hsbklist):
 	return {'hue': hsbklist[0], 'saturation': hsbklist[1], 'kelvin': hsbklist[3]}
 
-lifx = LifxLAN()
-bulbs = {}
-
 def refresh_bulbs(lifx, bulbs):
-	lifxlanlights = None
+	ids = []
 
 	print "Finding bulbs"
 
@@ -21,12 +18,14 @@ def refresh_bulbs(lifx, bulbs):
 			#print("Found {}".format(bulb.get_label()))
 
 			id = bulb.get_mac_addr().replace(":", "")
+			ids.append(id)
 			label = bulb.get_label()
 			power = "on" if bulb.get_power() > 0 else "off"
 			lifxlancolor = bulb.get_color()
 
 			bulbs[id] = {
-			'bulb': bulb,
+				'bulb': bulb,
+			    'finished': True,
 				'id': id,
 				'uuid': None,
 				'label': label,
@@ -42,14 +41,7 @@ def refresh_bulbs(lifx, bulbs):
 			}
 
 			pprint(bulbs[id])
+
 	except:
-		print "Unexpected error:", sys.exc_info()[0], sys.exc_info()[1]
-
-
-refresh_bulbs(lifx, bulbs)
-
-print "{} bulbs found".format(len(bulbs))
-print ""
-
-
+		print "Unexpected error finding bulbs:", sys.exc_info()[0], sys.exc_info()[1]
 
